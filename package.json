@@ -29,6 +29,7 @@
     "express": "^4.16.1",
     "graphql": "^0.11.7",
     "graphql-tools": "^2.2.1",
+    "lodash": "^4.17.4",
     "merge-graphql-schemas": "^1.1.4",
     "sequelize": "^4.13.5"
   }
