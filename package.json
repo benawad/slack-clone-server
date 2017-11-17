@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node index.js"
+    "start": "nodemon --exec babel-node index.js",
+    "test-server": "./reset_test_db.sh; TEST_DB=testslack babel-node index.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "axios": "^0.17.1",
     "babel-cli": "^6.26.0",
+    "babel-jest": "^21.2.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-3": "^6.24.1",
     "eslint": "^4.8.0",
@@ -19,7 +23,9 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.4.0",
-    "nodemon": "^1.12.1"
+    "jest": "^21.2.1",
+    "nodemon": "^1.12.1",
+    "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
     "apollo-server-express": "^1.1.3",
