@@ -10,9 +10,11 @@ import { createServer } from 'http';
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import formidable from 'formidable';
+import DataLoader from 'dataloader';
 
 import models from './models';
 import { refreshTokens } from './auth';
+import { channelBatcher } from './batchFunctions';
 
 const SECRET = 'asiodfhoi1hoi23jnl1kejd';
 const SECRET2 = 'asiodfhoi1hoi23jnl1kejasdjlkfasdd';
@@ -98,6 +100,7 @@ app.use(
       user: req.user,
       SECRET,
       SECRET2,
+      channelLoader: new DataLoader(ids => channelBatcher(ids, models, req.user)),
     },
   })),
 );
