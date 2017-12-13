@@ -1,4 +1,13 @@
 {
-  "presets": ["env", "stage-3"],
-  "plugins": ["transform-runtime"]
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "9.2"
+        }
+      }
+    ]
+  ],
+  "plugins": ["transform-object-rest-spread"]
 }

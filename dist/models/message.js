@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (sequelize, DataTypes) {
-  var Message = sequelize.define('message', {
+exports.default = (sequelize, DataTypes) => {
+  const Message = sequelize.define('message', {
     text: DataTypes.STRING,
     url: DataTypes.STRING,
     filetype: DataTypes.STRING
@@ -15,7 +15,7 @@ exports.default = function (sequelize, DataTypes) {
     }]
   });
 
-  Message.associate = function (models) {
+  Message.associate = models => {
     // 1:M
     Message.belongsTo(models.Channel, {
       foreignKey: {

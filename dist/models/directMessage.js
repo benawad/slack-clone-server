@@ -4,12 +4,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (sequelize, DataTypes) {
-  var DirectMessage = sequelize.define('direct_message', {
+exports.default = (sequelize, DataTypes) => {
+  const DirectMessage = sequelize.define('direct_message', {
     text: DataTypes.STRING
   });
 
-  DirectMessage.associate = function (models) {
+  DirectMessage.associate = models => {
     // 1:M
     DirectMessage.belongsTo(models.Team, {
       foreignKey: {
