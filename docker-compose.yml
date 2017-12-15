@@ -6,6 +6,8 @@ services:
       - webnet
   db:
     image: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
     networks: 
       - webnet
     environment:
@@ -21,6 +23,7 @@ services:
     environment:
       DB_HOST: db
       REDIS_HOST: redis
-    command: ["./wait-for-it.sh", "db:5432", "--", "node", "index.js"]
+    # command: ["./wait-for-it.sh", "db:5432", "--", "node", "index.js"]
+    command: ["node", "index.js"]
 networks:
   webnet:
