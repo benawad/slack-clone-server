@@ -1,0 +1,5 @@
+server {
+    location / {
+        proxy_pass http://web:8081;
+    }
+}
