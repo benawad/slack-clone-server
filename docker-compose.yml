@@ -23,6 +23,7 @@ services:
     environment:
       DB_HOST: db
       REDIS_HOST: redis
+      SERVER_URL: http://ec2-13-57-213-163.us-west-1.compute.amazonaws.com
     volumes:
       - ./files:/app/files
     depends_on:
