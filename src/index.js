@@ -14,7 +14,7 @@ import DataLoader from 'dataloader';
 
 import getModels from './models';
 import { refreshTokens } from './auth';
-import { channelBatcher } from './batchFunctions';
+import { channelBatcher, userBatcher } from './batchFunctions';
 
 const SECRET = 'asiodfhoi1hoi23jnl1kejd';
 const SECRET2 = 'asiodfhoi1hoi23jnl1kejasdjlkfasdd';
@@ -111,6 +111,7 @@ getModels().then((models) => {
         SECRET,
         SECRET2,
         channelLoader: new DataLoader(ids => channelBatcher(ids, models, req.user)),
+        userLoader: new DataLoader(ids => userBatcher(ids, models)),
         serverUrl: `${req.protocol}://${req.get('host')}`,
       },
     })),
