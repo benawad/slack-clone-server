@@ -32,4 +32,25 @@ const channelBatcher = exports.channelBatcher = async (ids, models, user) => {
   return ids.map(id => data[id]);
 };
 
-const dummy = exports.dummy = 5;
+const userBatcher = exports.userBatcher = async (ids, models) => {
+  // ids = [1, 2, 3, 4]
+  // return = [{username: 'bob'}]
+  const results = await models.sequelize.query(`
+    select *
+    from users as u 
+    where u.id in (:userIds)`, {
+    replacements: { userIds: ids },
+    model: models.User,
+    raw: true
+  });
+
+  const data = {};
+
+  // group by user id
+  results.forEach(r => {
+    data[r.id] = r;
+  });
+
+  // [{id: 1, username: 'bob'}, {}, {}]
+  return ids.map(id => data[id]);
+};
