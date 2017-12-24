@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
+const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export const createTokens = async (user, secret, secret2) => {
   const createToken = jwt.sign(
@@ -61,13 +62,16 @@ export const refreshTokens = async (token, refreshToken, models, SECRET, SECRET2
   };
 };
 
-export const tryLogin = async (email, password, models, SECRET, SECRET2) => {
-  const user = await models.User.findOne({ where: { email }, raw: true });
+export const tryLogin = async (identifier, password, models, SECRET, SECRET2) => {
+  
+  let query = {};
+  query[identifier.match(regex) ? 'email' : 'username'] = identifier;
+  const user = await models.User.findOne({ where: query, raw: true });
   if (!user) {
     // user with provided email not found
     return {
       ok: false,
-      errors: [{ path: 'email', message: 'Wrong email' }],
+      errors: [{ path: 'email/username', message: 'Wrong email or Username' }],
     };
   }
 
