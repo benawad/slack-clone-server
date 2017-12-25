@@ -2,3 +2,4 @@ node_modules
 dump.sql
 files
 pgdata
+nginx-data
