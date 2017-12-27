@@ -23,7 +23,7 @@ services:
     environment:
       DB_HOST: db
       REDIS_HOST: redis
-      SERVER_URL: http://ec2-13-57-213-163.us-west-1.compute.amazonaws.com
+      SERVER_URL: http://notrealchefs.com
     volumes:
       - ./files:/app/files
     depends_on:
@@ -33,18 +33,29 @@ services:
     command: ["node", "index.js"]
   nginx:
     image: nginx
-    container_name: nginx
     volumes:
       - ./mysite.template:/etc/nginx/conf.d/mysite.template
       - ./files:/files
-      # for https
+    networks:
+      - webnet
+    depends_on:
+      - web
+    ports:
+      - "8001:80"
+    environment:
+      VIRTUAL_ENV: localhost
+      VIRTUAL_PORT: 8001
+  https-nginx:
+    image: nginx
+    container_name: https-nginx
+    volumes:
       - ./nginx-data/conf.d:/etc/nginx/conf.d
       - ./nginx-data/vhost.d:/etc/nginx/vhost.d
       - ./nginx-data/html:/usr/share/nginx/html
       - ./nginx-data/certs:/etc/nginx/certs:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - "13.57.167.70:80:80"
+      - "13.57.167.70:443:443"
     networks:
       - webnet
     depends_on:
@@ -54,14 +65,14 @@ services:
     container_name: nginx-gen
     networks:
       - webnet
-    command: -notify-sighup nginx -watch -wait 5s:30s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    command: -notify-sighup https-nginx -watch -wait 5s:30s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
     volumes:
       - ./nginx-data/conf.d:/etc/nginx/conf.d
       - ./nginx-data/vhost.d:/etc/nginx/vhost.d
       - ./nginx-data/html:/usr/share/nginx/html
       - ./nginx-data/certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./mysite.template:/etc/docker-gen/templates/nginx.tmpl:ro
+      - ./nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
   nginx-letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     networks:
@@ -74,8 +85,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       NGINX_DOCKER_GEN_CONTAINER: nginx-gen
-      NGINX_PROXY_CONTAINER: nginx
-      VIRTUAL_HOST: ec2-13-57-213-163.us-west-1.compute.amazonaws.com
-      LETSENCRYPT_HOST: ec2-13-57-213-163.us-west-1.compute.amazonaws.com
+      NGINX_PROXY_CONTAINER: https-nginx
+      LETSENCRYPT_HOST: notrealchefs.com
+      DEBUG: "true"
 networks:
   webnet:
+  default:
+    external:
+      name: webproxy
