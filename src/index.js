@@ -11,6 +11,7 @@ import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import formidable from 'formidable';
 import DataLoader from 'dataloader';
+import session from 'express-session';
 
 import getModels from './models';
 import { refreshTokens } from './auth';
@@ -30,7 +31,22 @@ const schema = makeExecutableSchema({
 
 const app = express();
 
-app.use(cors('*'));
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000',
+}));
+
+app.use(session({
+  name: 'qid',
+  secret: 'aslkjdfklqweoriuqweojoin',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 1000 * 60 * 60 * 24 * 365 * 7, // 7 years
+  },
+}));
 
 const uploadDir = 'files';
 
@@ -97,7 +113,13 @@ getModels().then((models) => {
     next();
   };
 
-  app.use(addUser);
+  const addUser2 = (req, res, next) => {
+    req.user = req.session.user;
+    return next();
+  };
+
+  // app.use(addUser);
+  app.use(addUser2);
 
   app.use(
     graphqlEndpoint,
@@ -106,6 +128,7 @@ getModels().then((models) => {
     graphqlExpress(req => ({
       schema,
       context: {
+        req,
         models,
         user: req.user,
         SECRET,

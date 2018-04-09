@@ -61,7 +61,7 @@ export const refreshTokens = async (token, refreshToken, models, SECRET, SECRET2
   };
 };
 
-export const tryLogin = async (email, password, models, SECRET, SECRET2) => {
+export const tryLogin = async (email, password, models, req) => {
   const user = await models.User.findOne({ where: { email }, raw: true });
   if (!user) {
     // user with provided email not found
@@ -80,13 +80,7 @@ export const tryLogin = async (email, password, models, SECRET, SECRET2) => {
     };
   }
 
-  const refreshTokenSecret = user.password + SECRET2;
+  req.session.user = { userId: user.id };
 
-  const [token, refreshToken] = await createTokens(user, SECRET, refreshTokenSecret);
-
-  return {
-    ok: true,
-    token,
-    refreshToken,
-  };
+  return { ok: true };
 };

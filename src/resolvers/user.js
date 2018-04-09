@@ -21,8 +21,7 @@ export default {
       models.User.findOne({ where: { id: user.id } })),
   },
   Mutation: {
-    login: (parent, { email, password }, { models, SECRET, SECRET2 }) =>
-      tryLogin(email, password, models, SECRET, SECRET2),
+    login: (parent, { email, password }, { models, req }) => tryLogin(email, password, models, req),
     register: async (parent, args, { models }) => {
       try {
         const user = await models.User.create(args);
